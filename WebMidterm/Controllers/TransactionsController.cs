@@ -19,7 +19,7 @@ namespace WebMidterm.Controllers
         {
             var data = (from a in db.Transactions
                         join b in db.PolicyPackages
-                        on a.TID equals b.PolicyID into ab
+                        on a.PolicyID equals b.PolicyID into ab
                         from c in ab.DefaultIfEmpty()
                         select new TransactionPolicyClass
                         {
@@ -28,11 +28,8 @@ namespace WebMidterm.Controllers
                             MonthlyIncome = a.AnnualIncome / 12,
                             PolicyPackage = c.Package,
                             MonthlyPremium = a.MonthlyPremium,
-                            //TERMS = a.TERMS
                         }).ToList();
             return View(data);
-            //return View(db.Posts.ToList());
-            //return View(db.Transactions.ToList());
         }
 
         // GET: Transactions/Details/5
@@ -53,7 +50,19 @@ namespace WebMidterm.Controllers
         // GET: Transactions/Create
         public ActionResult Create()
         {
+            ViewBag.packages = GetAllPackages();
             return View();
+        }
+
+        private List<SelectListItem> GetAllPackages()
+        {
+            var data = (from itm in db.PolicyPackages
+                        select new SelectListItem
+                        {
+                            Value = itm.PolicyID.ToString(),
+                            Text = itm.Package, // + " - " + itm.PRICE,
+                        }).ToList();
+            return data;
         }
 
         // POST: Transactions/Create
@@ -65,8 +74,23 @@ namespace WebMidterm.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Transactions.Add(transaction);
-                db.SaveChanges();
+                PolicyPackage pol = db.PolicyPackages.Find(transaction.PolicyID);
+                // transaction.MonthlyPremium = 123;
+                if (pol != null)
+                {
+                    Transaction ts = new Transaction()
+                    {
+                        //TID = sale.TID,
+                        Client = transaction.Client,
+                        AnnualIncome = transaction.AnnualIncome,
+                        PolicyID = pol.PolicyID,
+                        MonthlyPremium = (transaction.AnnualIncome / 12) * pol.Premium,
+                    };
+                    db.Transactions.Add(ts);
+                    db.SaveChanges();
+                    //transaction.PolicyID = pol.PolicyID;
+                    //transaction.MonthlyPremium = (transaction.AnnualIncome / 12) * pol.Premium;
+                }
                 return RedirectToAction("Index");
             }
 
