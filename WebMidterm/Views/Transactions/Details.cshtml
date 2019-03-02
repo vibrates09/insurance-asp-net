@@ -1,0 +1,50 @@
+﻿@model WebMidterm.Models.Transaction
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Transaction</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.PolicyID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PolicyID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Client)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Client)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AnnualIncome)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AnnualIncome)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MonthlyPremium)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MonthlyPremium)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.TID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
